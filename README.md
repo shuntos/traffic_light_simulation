@@ -1,2 +1,7 @@
-# traffic_light_simulation
-Traffic light Simulation | Python| Pygame
+# Traffic light simulation
+
+Traffic light and pedestrian simulation python, pygame.
+
+Race-Car-Pygame
+
+
