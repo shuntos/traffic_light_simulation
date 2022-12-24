@@ -4,7 +4,7 @@ import math
 import os 
 from datetime import datetime
 import glob
-screen = pygame.display.set_mode((800, 600)) 
+screen = pygame.display.set_mode((1412, 978)) 
 pygame.init()
 from itertools import cycle
 
@@ -16,14 +16,22 @@ class Vehicle:
         self.image = pygame.image.load(random.choice(self.vehicle_images)).convert_alpha() 
         self.image = pygame.transform.scale(self.image, (50,90))
 
-        self.speed = random.uniform(0.7, 3.1)
+        self.speed = random.uniform(1, 4.1)
         
         self.direction = direction
         if self.direction in ["left-right","left-bottom","left-top"]:
              self.image = pygame.transform.rotate(self.image, 90)
 
-        if self.direction in ["top-bottom"]:
+        #if self.direction in ["top-bottom"]:
+            #self.image = pygame.transform.rotate(self.image, 180)
+
+        if self.direction in ["bottom-top"]:
             self.image = pygame.transform.rotate(self.image, 180)
+
+
+        if self.direction in ["right-left"]:
+            self.image = pygame.transform.rotate(self.image, -90)
+
 
         self.position = position
         self.origin_pos = position
@@ -36,14 +44,30 @@ class Vehicle:
             if self.position[1] > display_h:
                 self.reset()
 
+        if self.direction == "bottom-top":
+
+            self.position = [self.position[0], self.position[1]-self.speed]
+
+            if self.position[1] <= 0:
+                self.reset()
+
+
+
         elif self.direction == "left-right":
             self.position = [self.position[0]+self.speed, self.position[1]]
             if self.position[0] > display_w:
                 self.reset()
 
 
+
+        elif self.direction in ["right-left"]:
+            self.position = [self.position[0]-self.speed, self.position[1]]
+            if self.position[0] < 0:
+                self.reset()
+
+
         elif self.direction == "left-bottom":
-            if self.position[0] < 840:
+            if self.position[0] < 610:
 
                 self.position = [self.position[0]+self.speed, self.position[1]]
 
@@ -51,14 +75,14 @@ class Vehicle:
                 if self.image.get_width() > self.image.get_height():
 
                     self.image = pygame.transform.rotate(self.image, 90)
-                self.position = [860, self.position[1]+self.speed]
+                self.position = [610, self.position[1]+self.speed]
 
             if self.position[1] > display_h:
                 self.reset()
 
 
         elif self.direction == "left-top":
-            if self.position[0] < 980:
+            if self.position[0] < 700:
 
                 self.position = [self.position[0]+self.speed, self.position[1]]
 
@@ -66,7 +90,7 @@ class Vehicle:
                 if self.image.get_width() > self.image.get_height():
 
                     self.image = pygame.transform.rotate(self.image, 270)
-                self.position = [1020, self.position[1]-self.speed]
+                self.position = [750, self.position[1]-self.speed]
 
             if self.position[1] < 0:
                 self.reset()             
@@ -88,7 +112,12 @@ class Vehicle:
             self.image = pygame.transform.rotate(self.image, 270)
 
 
+        if self.direction in ["bottom-top"]:
+            self.image = pygame.transform.rotate(self.image, 180)
 
+
+        if self.direction in ["right-left"]:
+            self.image = pygame.transform.rotate(self.image, -90)
 
 
 class TrafficLight:
@@ -172,10 +201,29 @@ class Pedestrain:
             self.position = self.org_pos
 
 
+def test_collision(index, objects):
+
+    if objects[0].direction in ["bottom-top"]:
+        axis = 1
+    else:
+        axis = 0
+
+    distances = []
+    for i in range(len(objects)):
+
+        if index != i:
+
+            distances= abs(objects[index].position[axis]-objects[i].position[axis] )
+
+            if distances < 95:
+                return True
+
+    return False
+
 
 # Object variables
-display_h = 1080
-display_w = 1920
+display_h = 978
+display_w = 1412
 
 background = pygame.display.set_mode((display_w,display_h))
 pygame.display.set_caption('Traffic Simulation')
@@ -189,15 +237,44 @@ def quitsimulation():
 
 def gameloop():
 
-    vehicle_1 = Vehicle("left-right",[0,460])
-    vehicle_2 = Vehicle("left-right",[0,540])
 
-    vehicle_3 = Vehicle("left-bottom",[0,590])
 
-    vehicle_4 = Vehicle("left-top",[0,420])
 
-    vehicle_5 = Vehicle("top-bottom",[890,0])
-    vehicle_6 = Vehicle("top-bottom",[920,0])
+
+
+
+
+
+    ped_signal =  PedestrainLight([417, 310])  # [Right, Bottom, Left, Top]
+
+
+    signal_1 = TrafficLight("horizontal",[770,495]) #Right side
+    signal_2 = TrafficLight("vertical",[600,550]) #Bottom side
+    signal_3 = TrafficLight("horizontal",[540,390]) #Left side
+    signal_4 = TrafficLight("vertical",[710,340]) #Top side
+
+    signals = [signal_1, signal_2, signal_3, signal_4]
+
+
+    vehicle_1 = Vehicle("left-right",[0,490])
+    vehicle_2 = Vehicle("left-right",[0,490])
+
+    vehicle_3 = Vehicle("left-bottom",[0,540])
+
+    vehicle_4 = Vehicle("left-top",[0,400])
+
+    vehicle_5 = Vehicle("top-bottom",[655,0])
+    vehicle_6 = Vehicle("top-bottom",[655,0])
+
+
+    vehicle_7 = Vehicle("bottom-top",[705,display_h])
+    vehicle_8 = Vehicle("bottom-top",[705,display_h])
+
+    vehicle_9 = Vehicle("right-left",[display_w,445])
+    vehicle_10 = Vehicle("right-left",[display_w,445])
+
+
+
 
 
     left_2_right_vehicles = [vehicle_1,vehicle_2]
@@ -206,26 +283,20 @@ def gameloop():
 
     top_2_bottom_vehicles = [vehicle_5, vehicle_6]
 
+    bottom_2_top_vehicles = [vehicle_7, vehicle_8]
+
+    right_2_left_vehicles = [vehicle_9, vehicle_10]
 
     pedestrians = []
     for i in range(5):
         if i%2 == 0:
-            pedestrians.append(Pedestrain([600+i*30,700]))
+            pedestrians.append(Pedestrain([(ped_signal.position[0] - 40)+i*30,700]))
         else:
-            pedestrians.append(Pedestrain([620+i*30,390]))
+            pedestrians.append(Pedestrain([(ped_signal.position[0]-40)+i*30,390]))
 
 
 
 
-    signal_1 = TrafficLight("horizontal",[1030,550]) #Right side
-    signal_2 = TrafficLight("vertical",[840,620]) #Bottom side
-    signal_3 = TrafficLight("horizontal",[780,410]) #Left side
-    signal_4 = TrafficLight("vertical",[980,340]) #Top side
-
-    signals = [signal_1, signal_2, signal_3, signal_4]
-
-
-    ped_signal =  PedestrainLight([650, 340])  # [Right, Bottom, Left, Top]
 
 
     global start 
@@ -273,12 +344,14 @@ def gameloop():
         background.blit(ped_signal.image, ped_signal.position)
 
 
+        
 
-        for vehicle in left_2_right_vehicles: # Case for Left to right Vehicles
+        for k, vehicle in enumerate( left_2_right_vehicles): # Case for Left to right Vehicles
             background.blit(vehicle.image, vehicle.position)
 
-            stop = False
 
+
+            stop = False
 
             if signal_1.status == "yellow":
                 if vehicle.position[0]>(ped_signal.position[0]- 200) and  vehicle.position[0]<ped_signal.position[0]  :
@@ -292,8 +365,18 @@ def gameloop():
                 if vehicle.position[0]>(ped_signal.position[0]- 200) and  vehicle.position[0]<ped_signal.position[0]  :
                     stop = True
 
+
+            if k !=0:
+                status = test_collision(k, left_2_right_vehicles)
+                print(status)
+
+                if status:
+                    stop = True
+
+
             if not stop:
                 vehicle.update()
+
 
 
         for vehicle in left_2_bottom_vehicles:
@@ -336,7 +419,76 @@ def gameloop():
 
         for vehicle in top_2_bottom_vehicles:
             background.blit(vehicle.image, vehicle.position)
-            vehicle.update()
+            stop = False
+
+            if signal_2.status == "yellow":
+                if vehicle.position[1]>(signal_4.position[1]- 100) and  vehicle.position[1]<signal_4.position[1]  :
+                    stop = True
+
+
+            if signal_2.status == "red":
+                if vehicle.position[1]>(signal_4.position[1]- 100) and  vehicle.position[1]<signal_4.position[1]  :
+                    stop = True
+
+            if not stop:
+                vehicle.update()
+
+
+
+        for k, vehicle in enumerate(bottom_2_top_vehicles):
+            background.blit(vehicle.image, vehicle.position)
+            stop = False
+
+            
+            if signal_4.status == "yellow":
+                if vehicle.position[1]<(signal_2.position[1]+ 100) and  vehicle.position[1]>signal_2.position[1]  :
+                    stop = True
+
+
+            if signal_4.status == "red":
+                if vehicle.position[1]<(signal_2.position[1]+ 100) and  vehicle.position[1] >signal_4.position[1]  :
+                    stop = True
+
+
+
+            if k !=0:
+                status = test_collision(k, right_2_left_vehicles)
+                print(status)
+
+                if status:
+                    stop = True
+
+
+            if not stop:
+                vehicle.update()
+
+
+
+        for k, vehicle in enumerate(right_2_left_vehicles):
+            background.blit(vehicle.image, vehicle.position)
+            stop = False
+
+            
+            if signal_3.status == "yellow":
+                if vehicle.position[0] <(signal_1.position[0]+ 80) and  vehicle.position[0] >signal_1.position[0]  :
+                    stop = True
+
+
+            if signal_3.status == "red":
+                if vehicle.position[0]<(signal_1.position[0]+ 80) and  vehicle.position[0] >signal_1.position[0]  :
+                    stop = True
+
+
+
+            if k !=0:
+                status = test_collision(k, right_2_left_vehicles)
+                print(status)
+
+                if status:
+                    stop = True
+
+            if not stop:
+                vehicle.update()
 
 
 
