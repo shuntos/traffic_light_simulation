@@ -341,22 +341,22 @@ def collision(vehicle):
             if vehicle.id != next_vehicle.id and next_vehicle.image.get_width() == vehicle.image.get_width():
 
                 if  next_vehicle.position[0] == vehicle.position[0] and vehicle.direction in ["bottom-top","bottom-left"]:
-                    if (vehicle.position[1] - next_vehicle.position[1]) > 10 and  vehicle.position[1] - next_vehicle.position[1] <90 :
+                    if (vehicle.position[1] - next_vehicle.position[1]) > 10 and  vehicle.position[1] - next_vehicle.position[1] <120 :
                         stop =  True
                     #print(next_vehicle.direction, vehicle.direction)
 
                 
                 elif next_vehicle.position[0] == vehicle.position[0] and vehicle.direction in ["top-bottom","top-right"]:                    
-                    if (vehicle.position[1] - next_vehicle.position[1]) < -10 and (vehicle.position[1] - next_vehicle.position[1]) > -90:
+                    if (vehicle.position[1] - next_vehicle.position[1]) < -10 and (vehicle.position[1] - next_vehicle.position[1]) > -120:
                         stop =  True
 
 
                 elif next_vehicle.position[1] == vehicle.position[1] and vehicle.direction in ["left-right","left-top",]:                    
-                    if (vehicle.position[0] - next_vehicle.position[0]) < -10 and (vehicle.position[0] - next_vehicle.position[0]) > -90:
+                    if (vehicle.position[0] - next_vehicle.position[0]) < -10 and (vehicle.position[0] - next_vehicle.position[0]) > -120:
                         stop =  True               
 
                 elif next_vehicle.position[1] == vehicle.position[1] and vehicle.direction in ["right-left","right-bottom",]:                    
-                    if (vehicle.position[0] - next_vehicle.position[0]) > 10 and (vehicle.position[0] - next_vehicle.position[0]) <90:
+                    if (vehicle.position[0] - next_vehicle.position[0]) > 10 and (vehicle.position[0] - next_vehicle.position[0]) <120:
                         stop =  True      
 
 
@@ -386,7 +386,7 @@ def gameloop():
     top_2_right_vehicles = [Vehicle("top-right",[655,-100])]
 
 
-    bottom_2_top_vehicles = [ (Vehicle("bottom-top",[705,display_h-60])) for i in range(2) ]
+    bottom_2_top_vehicles = [ (Vehicle("bottom-top",[705,display_h-100])) for i in range(2) ]
     bottom_2_left_vehicles = [ (Vehicle("bottom-left",[705,display_h-10])) for i in range(1) ]
     bottom_2_right_vehicles = [Vehicle("bottom-right",[750,display_h])]
 
