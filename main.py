@@ -319,14 +319,10 @@ class Pedestrain:
 # Object variables
 display_h = 978
 display_w = 1412
-
-
 background = pygame.display.set_mode((display_w,display_h))
 pygame.display.set_caption('Traffic Simulation')
 clock = pygame.time.Clock()
 imgroad = pygame.image.load('images/road.png').convert_alpha()
-
-
 
 
 def quitsimulation():
@@ -386,7 +382,7 @@ def gameloop():
     top_2_right_vehicles = [Vehicle("top-right",[655,-100])]
 
 
-    bottom_2_top_vehicles = [ (Vehicle("bottom-top",[705,display_h-100])) for i in range(2) ]
+    bottom_2_top_vehicles = [ (Vehicle("bottom-top",[705,display_h-0])) for i in range(2) ]
     bottom_2_left_vehicles = [ (Vehicle("bottom-left",[705,display_h-10])) for i in range(1) ]
     bottom_2_right_vehicles = [Vehicle("bottom-right",[750,display_h])]
 
@@ -423,8 +419,6 @@ def gameloop():
             pedestrians.append(Pedestrain([(ped_signal.position[0]-40)+i*30,340]))
             pedestrians_right.append(Pedestrain([(ped_signal.position[0]+400)+i*30,340]))
 
-
-
     global start 
     start = datetime.now()
     ped_vio = random.randrange(0,  77)
@@ -456,7 +450,6 @@ def gameloop():
             else:
 
                 signals[ii].update_light("red")
-
 
         if (datetime.now() - start).total_seconds() > 90:
             start = datetime.now()
@@ -512,9 +505,6 @@ def gameloop():
 
                 if not stop:
                     vehicle.update()
-
-
-    
 
         print(int((datetime.now() - start).total_seconds() ), random_time_violation)
         # Adding violation for Signal cross by vehicles:
