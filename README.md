@@ -1,5 +1,11 @@
 # Traffic light simulation
 
+# Run program 
+
+pip3 install pygame 
+
+python3 main.py
+
 Traffic light and pedestrian simulation python, pygame.
 
 
